@@ -1,42 +1,21 @@
 pipeline {
     agent any
 
-    environment {
-        VENV = 'venv'
-    }
-
     stages {
-        stage ("Install") {
-            steps {
-                sh '''
-                    python3 -m venv $VENV
-                    . $VENV/bin/activate
-                    pip install --upgrade pip
-                    pip install -r requirements.txt
-                '''
-            }
-        }
-        stage ("Linting") {
+        stage('Build Image') {
             steps {
                 script {
-                    echo "This is my Linting Step"
-                }
-            }
-        }
-        stage ("Install Packages") {
-            steps {
-                script {
-                    echo "This is Install PAkcges Step"
-                }
-            }
-        }
-        stage ("Run Application") {
-            steps {
-                script {
-                    echo "This is my Run applcaition Step"
+                    sh 'docker build -t greet-app .'
                 }
             }
         }
 
+        stage('Run Container') {
+            steps {
+                script {
+                    sh 'docker run greet-app'
+                }
+            }
+        }
     }
 }
